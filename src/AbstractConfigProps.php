@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaplePHP\Emitron;
 
+use MaplePHP\DTO\Format\Str;
 use MaplePHP\Emitron\Contracts\ConfigPropsInterface;
 
 abstract class AbstractConfigProps implements ConfigPropsInterface
@@ -36,12 +37,15 @@ abstract class AbstractConfigProps implements ConfigPropsInterface
     /**
      * Check if property exists
      *
-     * @param string $key
-     * @return bool
+     * @param string|string $key
+     * @return bool|string
      */
-    public function hasProp(string $key): bool
+    public function hasProp(string $key): bool|string
     {
-        return property_exists($this, $key);
+        if(str_contains($key, "-")) {
+            $key = Str::value($key)->camelCaseFromSep()->get();
+        }
+        return property_exists($this, $key) ? $key : false;
     }
 
     /**
@@ -53,10 +57,11 @@ abstract class AbstractConfigProps implements ConfigPropsInterface
      */
     public function setProp(string $key, mixed $value): self
     {
-        if (!$this->hasProp($key)) {
+        $newKey = $this->hasProp($key);
+        if ($newKey === false) {
             $this->missingProps[] = $key;
         }
-        $this->propsHydration($key, $value);
+        $this->propsHydration($newKey, $value);
         return $this;
     }
 
@@ -91,7 +96,8 @@ abstract class AbstractConfigProps implements ConfigPropsInterface
      */
     public function get(string $key): mixed
     {
-        return $this->hasProp($key) ? $this->{$key} : null;
+        $newKey = $this->hasProp($key);
+        return ($newKey !== false) ? $this->{$newKey} : null;
     }
 
     /**

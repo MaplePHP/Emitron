@@ -8,9 +8,9 @@ interface ConfigPropsInterface
      * Check if property exists
      *
      * @param string $key
-     * @return bool
+     * @return bool|string
      */
-    public function hasProp(string $key): bool;
+    public function hasProp(string $key): bool|string;
 
     /**
      * Set config props - this is passed as configurations to the dispatcher
