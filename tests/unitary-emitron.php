@@ -9,14 +9,14 @@ use MaplePHP\Emitron\RequestHandler;
 use MaplePHP\Http\Environment;
 use MaplePHP\Http\ResponseFactory;
 use MaplePHP\Http\ServerRequest;
+use MaplePHP\Http\Stream;
 use MaplePHP\Http\Uri;
-use MaplePHP\Unitary\{Expect, TestCase, Unit};
+use MaplePHP\Unitary\{Config\TestConfig, Expect, TestCase};
 
-$unit = new Unit();
-$unit->group("www", function (TestCase $case) {
+$config = TestConfig::make()->withName("emitron");
+group($config->withSubject("Testing middleware and emitter"), function (TestCase $case) {
 
-
-    $stream = new \MaplePHP\Http\Stream(\MaplePHP\Http\Stream::TEMP);
+    $stream = new Stream(Stream::TEMP);
     $stream->write("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eleifend ligula vel diam tincidunt finibus. In dapibus dictum lectus a malesuada.");
 
     // It will reverse the order
@@ -35,18 +35,20 @@ $unit->group("www", function (TestCase $case) {
     $request = $request->withHeader("Accept-Encoding", "gzip");
 
     $factory = new ResponseFactory();
-    $factory->createResponse(body: $stream);
+    $factory->createResponse();
     $handler = new RequestHandler($middlewares, $factory);
     $response = $handler->handle($request);
+
 
     $emit = new HttpEmitter();
 
     ob_start();
-    $emit->emit($response, $request);
+    $emit->emit($response->withBody($stream), $request);
     $out = ob_get_clean();
 
+
     $case->validate($out, function (Expect $expect) {
-        $expect->isLength(97);
+        $expect->isLength(143);
     });
 
     $headers = $response->getHeaders();
@@ -61,10 +63,5 @@ $unit->group("www", function (TestCase $case) {
     $case->validate($headers['content-length'][0] ?? 0, function (Expect $expect) {
         $expect->isLooselyEqualTo(126);
     });
-
-
-    //print_r($response->getHeaders());
-
-    //assert(false);
 });
 

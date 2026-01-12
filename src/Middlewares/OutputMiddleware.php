@@ -15,7 +15,7 @@ class OutputMiddleware implements MiddlewareInterface
 {
     private ?StreamInterface $stream = null;
 
-    public function __construct(StreamInterface $stream = null)
+    public function __construct(?StreamInterface $stream = null)
     {
         $this->stream = $stream;
     }
