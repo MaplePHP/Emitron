@@ -131,7 +131,8 @@ class DispatchConfig implements DispatchConfigInterface
             throw new Exception('The config file do not return a array');
         }
 
-        $this->dir = realpath(dirname($path));
+        //$this->dir = realpath(dirname($path));
+        $this->dir = AbstractKernel::getRouterFilePath();
         $this->props = new ConfigProps($config);
     }
 }

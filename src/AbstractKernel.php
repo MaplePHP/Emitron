@@ -31,6 +31,7 @@ abstract class AbstractKernel implements KernelInterface
 {
     public const CONFIG_FILE_PATH = __DIR__ . '/../emitron.config';
     protected static ?string $configFilePath = null;
+    protected static ?string $routerFilePath = null;
     protected ContainerInterface $container;
     protected array $userMiddlewares;
     protected ?DispatchConfigInterface $dispatchConfig = null;
@@ -75,6 +76,30 @@ abstract class AbstractKernel implements KernelInterface
             return static::CONFIG_FILE_PATH;
         }
         return static::$configFilePath;
+    }
+
+    /**
+     * Set router path
+     *
+     * @param string $path
+     * @return void
+     */
+    public static function setRouterFilePath(string $path): void
+    {
+        static::$routerFilePath = $path;
+    }
+
+    /**
+     * Get router path
+     *
+     * @return string
+     */
+    public static function getRouterFilePath(): string
+    {
+        if(static::$routerFilePath === null) {
+            return realpath(dirname(self::getConfigFilePath()));
+        }
+        return static::$routerFilePath;
     }
 
     /**
