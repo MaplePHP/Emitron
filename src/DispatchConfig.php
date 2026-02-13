@@ -34,7 +34,7 @@ class DispatchConfig implements DispatchConfigInterface
     public function __construct(string|null|ConfigPropsInterface $props = null)
     {
         if (!($props instanceof ConfigPropsInterface)) {
-            $this->loadConfigFile(($props === null) ? __DIR__ . '/../emitron.config' : $props);
+            $this->loadConfigFile(($props === null) ? __DIR__ . '/../emitron.config.php' : $props);
         }
     }
 
@@ -120,7 +120,7 @@ class DispatchConfig implements DispatchConfigInterface
      */
     public function loadConfigFile(string $path): void
     {
-        $path = realpath($path . '.php');
+        $path = realpath($path);
 
         if ($path === false) {
             throw new Exception('The config file does not exist');

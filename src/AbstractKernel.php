@@ -29,7 +29,7 @@ use Psr\Http\Message\StreamInterface;
 
 abstract class AbstractKernel implements KernelInterface
 {
-    public const CONFIG_FILE_PATH = __DIR__ . '/../emitron.config';
+    public const CONFIG_FILE_PATH = __DIR__ . '/../emitron.config.php';
     protected static ?string $configFilePath = null;
     protected static ?string $routerFilePath = null;
     protected ContainerInterface $container;
