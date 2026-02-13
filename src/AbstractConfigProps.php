@@ -16,11 +16,11 @@ abstract class AbstractConfigProps implements ConfigPropsInterface
     /**
      * Hydrate the properties/object with expected data, and handle unexpected data
      *
-     * @param string $key
+     * @param string|bool $key
      * @param mixed $value
      * @return void
      */
-    abstract protected function propsHydration(string $key, mixed $value): void;
+    abstract protected function propsHydration(string|bool $key, mixed $value): void;
 
     /**
      * Set type safe config props
