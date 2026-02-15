@@ -57,10 +57,10 @@ abstract class AbstractKernel implements KernelInterface
     /**
      * Makes it easy to specify a config file inside a custom kernel file
      *
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public static function setConfigFilePath(string $path): void
+    public static function setConfigFilePath(?string $path): void
     {
         static::$configFilePath = $path;
     }
@@ -81,10 +81,10 @@ abstract class AbstractKernel implements KernelInterface
     /**
      * Set router path
      *
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public static function setRouterFilePath(string $path): void
+    public static function setRouterFilePath(?string $path): void
     {
         static::$routerFilePath = $path;
     }
