@@ -127,6 +127,7 @@ class DispatchConfig implements DispatchConfigInterface
         }
 
         $config = require $path;
+        // Add json logic here in the future
         if (!is_array($config)) {
             throw new Exception('The config file do not return a array');
         }
