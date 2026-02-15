@@ -120,13 +120,14 @@ class DispatchConfig implements DispatchConfigInterface
      */
     public function loadConfigFile(string $path): void
     {
-        $path = realpath($path . '.php');
+        $path = realpath($path);
 
         if ($path === false) {
             throw new Exception('The config file does not exist');
         }
 
         $config = require $path;
+        // Add json logic here in the future
         if (!is_array($config)) {
             throw new Exception('The config file do not return a array');
         }
