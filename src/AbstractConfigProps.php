@@ -11,6 +11,7 @@ abstract class AbstractConfigProps implements ConfigPropsInterface
 {
     /** @var array <int, string> */
     public array $missingProps = [];
+    public ?string $path = null;
     public ?string $test = null;
 
     /**

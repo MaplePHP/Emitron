@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace MaplePHP\Emitron;
 
 use Exception;
+use MaplePHP\Emitron\Configs\ConfigPropsFactory;
 use MaplePHP\Emitron\Contracts\ConfigPropsInterface;
 use MaplePHP\Emitron\Contracts\DispatchConfigInterface;
 use MaplePHP\Unitary\Config\ConfigProps;
 use MaplePHP\Unitary\Interfaces\RouterDispatchInterface;
 use MaplePHP\Unitary\Interfaces\RouterInterface;
+use MaplePHP\Unitary\Support\Helpers;
 
 class DispatchConfig implements DispatchConfigInterface
 {
@@ -134,6 +136,6 @@ class DispatchConfig implements DispatchConfigInterface
 
         //$this->dir = realpath(dirname($path));
         $this->dir = AbstractKernel::getRouterFilePath();
-        $this->props = new ConfigProps($config);
+        $this->props = ConfigPropsFactory::create($config);
     }
 }
