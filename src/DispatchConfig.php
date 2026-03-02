@@ -18,10 +18,8 @@ use Exception;
 use MaplePHP\Emitron\Configs\ConfigPropsFactory;
 use MaplePHP\Emitron\Contracts\ConfigPropsInterface;
 use MaplePHP\Emitron\Contracts\DispatchConfigInterface;
-use MaplePHP\Unitary\Config\ConfigProps;
 use MaplePHP\Unitary\Interfaces\RouterDispatchInterface;
 use MaplePHP\Unitary\Interfaces\RouterInterface;
-use MaplePHP\Unitary\Support\Helpers;
 
 class DispatchConfig implements DispatchConfigInterface
 {
@@ -38,6 +36,28 @@ class DispatchConfig implements DispatchConfigInterface
         if (!($props instanceof ConfigPropsInterface)) {
             $this->loadConfigFile(($props === null) ? __DIR__ . '/../emitron.config.php' : $props);
         }
+    }
+
+    /**
+     * Get config value
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get(string $key): mixed
+    {
+        return $this->props->{$key};
+    }
+
+    /**
+     * Check if config prop exists
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key): bool
+    {
+        return isset($this->props->{$key});
     }
 
     /**

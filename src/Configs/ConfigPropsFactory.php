@@ -23,7 +23,7 @@ class ConfigPropsFactory
         }
 
         if (!class_exists($name)) {
-            return self::resolver();
+            return self::resolver($props);
         }
 
         return new $name($props);
