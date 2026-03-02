@@ -18,13 +18,15 @@ use Exception;
 use MaplePHP\Emitron\Configs\ConfigPropsFactory;
 use MaplePHP\Emitron\Contracts\ConfigPropsInterface;
 use MaplePHP\Emitron\Contracts\DispatchConfigInterface;
-use MaplePHP\Unitary\Interfaces\RouterDispatchInterface;
-use MaplePHP\Unitary\Interfaces\RouterInterface;
+use MaplePHP\Unitary\Interfaces\RouterDispatchInterface as UnitaryRouterDispatchInterface;
+use MaplePHP\Unitary\Interfaces\RouterInterface as UnitaryRouterInterface;
+use MaplePHP\Emitron\Contracts\RouterInterface;
+use MaplePHP\Emitron\Contracts\RouterDispatchInterface;
 
 class DispatchConfig implements DispatchConfigInterface
 {
     private string $dir;
-    private ?RouterInterface $router = null;
+    private RouterInterface|UnitaryRouterInterface|null $router = null;
     protected ConfigPropsInterface $props;
 
     /**
@@ -100,12 +102,12 @@ class DispatchConfig implements DispatchConfigInterface
     /**
      * Get current exit code as int or null if not set
      *
-     * @return RouterDispatchInterface
+     * @return UnitaryRouterInterface|RouterDispatchInterface
      */
-    public function getRouter(): RouterDispatchInterface
+    public function getRouter(): UnitaryRouterInterface|RouterDispatchInterface
     {
         if ($this->router === null) {
-            return new class () implements RouterDispatchInterface {
+            return new class () implements UnitaryRouterDispatchInterface, RouterDispatchInterface {
                 public function dispatch(callable $call): bool
                 {
                     $call(['handler' => []], [], [], '');
@@ -127,7 +129,7 @@ class DispatchConfig implements DispatchConfigInterface
     {
         $inst = clone $this;
         $inst->router = $call($this->dir);
-        if (!($inst->router instanceof RouterInterface)) {
+        if (!($inst->router instanceof RouterInterface || $inst->router instanceof UnitaryRouterInterface)) {
             throw new Exception('Router must implement RouterInterface and "return" a it!');
         }
         return $inst;

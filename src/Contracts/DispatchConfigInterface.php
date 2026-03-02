@@ -3,7 +3,7 @@
 namespace MaplePHP\Emitron\Contracts;
 
 use Exception;
-use MaplePHP\Unitary\Interfaces\RouterDispatchInterface;
+use MaplePHP\Unitary\Interfaces\RouterDispatchInterface as UnitaryRouterDispatchInterface;
 
 interface DispatchConfigInterface
 {
@@ -35,9 +35,9 @@ interface DispatchConfigInterface
     /**
      * Get current exit code as int or null if not set
      *
-     * @return RouterDispatchInterface
+     * @return RouterDispatchInterface|UnitaryRouterDispatchInterface
      */
-    public function getRouter(): RouterDispatchInterface;
+    public function getRouter(): RouterDispatchInterface|UnitaryRouterDispatchInterface;
 
     /**
      * Add exit after execution of the app has been completed

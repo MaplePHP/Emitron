@@ -22,13 +22,14 @@ class HttpEmitter implements EmitterInterface
      */
     public function emit(ResponseInterface $response, ServerRequestInterface $request): void
     {
+
         $body = $response->getBody();
         $status = $response->getStatusCode();
         $method = strtoupper($request->getMethod());
         $skipBody = in_array($status, [204, 304]) || ($status >= 100 && $status < 200) || $method === 'HEAD';
 
         // Default to 204 No Content if nobody was written
-        if (!$response->getBody()->getSize() && $this->isSuccessfulResponse()) {
+        if (!$response->getBody()->getSize() && $this->isSuccessfulResponse($response)) {
             $response = $response->withStatus(204);
             $response->getBody()->write("No Content\n");
         }

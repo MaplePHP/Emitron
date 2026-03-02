@@ -26,6 +26,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 abstract class AbstractKernel implements KernelInterface
 {
@@ -118,6 +119,7 @@ abstract class AbstractKernel implements KernelInterface
      *
      * @param ServerRequestInterface $request
      * @param StreamInterface $stream
+     * @param RequestHandlerInterface $finalHandler
      * @param array $middlewares
      * @return ResponseInterface
      * @throws \ReflectionException
@@ -125,17 +127,21 @@ abstract class AbstractKernel implements KernelInterface
     protected function initRequestHandler(
         ServerRequestInterface $request,
         StreamInterface $stream,
+        RequestHandlerInterface $finalHandler,
         array $middlewares = []
-    ) : ResponseInterface {
-        $factory = new ResponseFactory($stream);
+    ): ResponseInterface {
+
         $this->bindInterfaces([
-            "ContainerInterface" => $this->container, "RequestInterface" => $request,
-            "ServerRequestInterface" => $request, "StreamInterface" => $stream,
+            "ContainerInterface" => $this->container,
+            "RequestInterface" => $request,
+            "ServerRequestInterface" => $request,
+            "StreamInterface" => $stream,
         ]);
+
         $middlewares = array_merge($this->userMiddlewares, $middlewares);
-        $handler = new RequestHandler($middlewares, $factory);
+        $handler = new RequestHandler($middlewares, $finalHandler);
         $response = $handler->handle($request);
-        $this->bindInterfaces(["ResponseInterface" => $response]);
+
         return $response;
     }
 
