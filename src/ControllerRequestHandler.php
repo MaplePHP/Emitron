@@ -2,7 +2,9 @@
 namespace MaplePHP\Emitron;
 
 
+use FastRoute\Dispatcher;
 use MaplePHP\Container\Reflection;
+use MaplePHP\Core\Router\RouterDispatcher;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,6 +20,7 @@ final class ControllerRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this->factory->createResponse();
+
         $this->appendInterfaces([
             "ResponseInterface" => $response,
         ]);
@@ -51,7 +54,7 @@ final class ControllerRequestHandler implements RequestHandlerInterface
             return $result;
         }
 
-        // If controller didn’t return a response, you can decide a convention:
+        // If controller didn’t return a response:
         // - treat it as “controller wrote to $response->getBody() somewhere”
         // - or treat non-response as error
         return $response;
