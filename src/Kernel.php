@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace MaplePHP\Emitron;
 
-use FastRoute\Dispatcher;
-use MaplePHP\Core\Router\RouterDispatcher;
 use MaplePHP\Http\ResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -35,7 +33,7 @@ class Kernel extends AbstractKernel
 
         $this->dispatchConfig->getRouter()->dispatch(function ($data, $args, $middlewares) use ($request, $stream) {
 
-            $dispatchCode = $data[0] ?? RouterDispatcher::FOUND;
+            //$dispatchCode = $data[0] ?? RouterDispatcher::FOUND;
 
             [$data, $args, $middlewares] = $this->reMap($data, $args, $middlewares);
 
@@ -60,6 +58,7 @@ class Kernel extends AbstractKernel
                 middlewares: $middlewares
             );
 
+            /*
             if ($dispatchCode === Dispatcher::NOT_FOUND) {
                 $response = $response->withStatus(404);
             }
@@ -67,6 +66,7 @@ class Kernel extends AbstractKernel
             if ($dispatchCode === Dispatcher::METHOD_NOT_ALLOWED) {
                 $response = $response->withStatus(405);
             }
+             */
 
             $this->createEmitter()->emit($response, $request);
         });

@@ -32,7 +32,19 @@ composer require maplephp/emitron
 Emitron includes a robust request handler that executes PSR-15 middlewares in sequence, returning a fully PSR-7 compliant response.
 
 ```php
-use MaplePHP\Emitron\RequestHandler;use MaplePHP\Http\Environment;use MaplePHP\Http\ServerRequest;use MaplePHP\Http\Uri;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use MaplePHP\Emitron\RequestHandler;
+use MaplePHP\Emitron\Emitters\HttpEmitter;
+use MaplePHP\Http\Environment;
+use MaplePHP\Http\ServerRequest;
+use MaplePHP\Http\Uri;
+use MaplePHP\Emitron\Middlewares\{
+    ContentLengthMiddleware,
+    GzipMiddleware,
+    HeadRequestMiddleware
+};
+use App\Controllers\MyController;
 
 // Use MaplePHP HTTP library or any other PSR-7 implementation
 $env = new Environment();
@@ -48,8 +60,23 @@ $middlewares = [
 ];
 
 // Run the middleware stack
-$handler = new RequestHandler($middlewares, $factory);
+
+
+$factory = new ResponseFactory($bodyStream);
+// $finalHandler = new ControllerRequestHandler($factory, [MyController::class, "index"]);
+$finalHandler = new ControllerRequestHandler($factory, function(RequestInterface $request, ResponseInterface $response) {
+    $response->getBody()->write("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+    return $response;
+});
+
+$handler = new RequestHandler($middlewares, $finalHandler);
 $response = $handler->handle($request);
+
+// Emit the execute headers and response correctly 
+//$emit = new CliEmitter($response, $request);
+$emit = new HttpEmitter();
+$emit->emit($response, $request);
+
 ```
 
 Each middleware conforms to `Psr\Http\Server\MiddlewareInterface`, allowing you to plug in your own or third-party middlewares with no additional setup.

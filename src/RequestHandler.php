@@ -24,6 +24,7 @@ final class RequestHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+
         // End of chain -> call controller (or whatever final handler you set)
         if (!isset($this->middlewareQueue[$this->index])) {
             return $this->finalHandler->handle($request);
