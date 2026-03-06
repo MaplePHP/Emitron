@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MaplePHP\Emitron\Configs;
 
 use MaplePHP\Emitron\AbstractConfigProps;
@@ -13,19 +15,17 @@ class ConfigPropsFactory
      * @param array $props
      * @return ConfigPropsInterface
      */
-    public static function create(array $props): ConfigPropsInterface
+    public static function create(array $props, ?string $configProps = null): ConfigPropsInterface
     {
-        $override = '\\Configs\\ConfigProps';
+        $override = ($configProps !== null) ? $configProps : '\\Configs\\ConfigProps';
         $default  = \MaplePHP\Unitary\Config\ConfigProps::class;
-        $name = class_exists($override) ? $override : $default;
+        $name = (class_exists($override)) ? $override : $default;
         if (!is_subclass_of($name, ConfigPropsInterface::class)) {
             $name = $default;
         }
-
         if (!class_exists($name)) {
             return self::resolver($props);
         }
-
         return new $name($props);
     }
 

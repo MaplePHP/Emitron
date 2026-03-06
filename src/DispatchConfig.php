@@ -28,17 +28,30 @@ class DispatchConfig implements DispatchConfigInterface
     private string $dir;
     private RouterInterface|UnitaryRouterInterface|null $router = null;
     protected ConfigPropsInterface $props;
+	protected ?string $configPropClass = null;
 
-    /**
-     * @param string|ConfigPropsInterface|null $props
-     * @throws Exception
-     */
-    public function __construct(string|null|ConfigPropsInterface $props = null)
+	/**
+	 * @param string|ConfigPropsInterface|null $props
+	 * @param string|null $configPropClass
+	 * @throws Exception
+	 */
+    public function __construct(string|null|ConfigPropsInterface $props = null, ?string $configPropClass = null)
     {
+	    $this->configPropClass = $configPropClass;
         if (!($props instanceof ConfigPropsInterface)) {
             $this->loadConfigFile(($props === null) ? __DIR__ . '/../emitron.config.php' : $props);
         }
     }
+
+	/**
+	 * Get used config prop class as string
+	 *
+	 * @return string|null
+	 */
+	public function getConfigPropsClass(): ?string
+	{
+		return $this->configPropClass;
+	}
 
     /**
      * Get config value
@@ -155,9 +168,9 @@ class DispatchConfig implements DispatchConfigInterface
         if (!is_array($config)) {
             throw new Exception('The config file do not return a array');
         }
-
+		
         //$this->dir = realpath(dirname($path));
         $this->dir = AbstractKernel::getRouterFilePath();
-        $this->props = ConfigPropsFactory::create($config);
+        $this->props = ConfigPropsFactory::create($config, $this->configPropClass);
     }
 }

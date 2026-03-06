@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace MaplePHP\Emitron;
 
 use MaplePHP\Container\Reflection;
+use MaplePHP\Emitron\Contracts\AppInterface;
 use MaplePHP\Emitron\Contracts\DispatchConfigInterface;
 use MaplePHP\Emitron\Contracts\EmitterInterface;
 use MaplePHP\Emitron\Contracts\KernelInterface;
 use MaplePHP\Emitron\Emitters\CliEmitter;
 use MaplePHP\Emitron\Emitters\HttpEmitter;
+use MaplePHP\Http\Interfaces\PathInterface;
 use MaplePHP\Http\ResponseFactory;
 use MaplePHP\Http\Stream;
 use Psr\Container\ContainerInterface;
@@ -127,6 +129,7 @@ abstract class AbstractKernel implements KernelInterface
     protected function initRequestHandler(
         ServerRequestInterface $request,
         StreamInterface $stream,
+        PathInterface $path,
         RequestHandlerInterface $finalHandler,
         array $middlewares = []
     ): ResponseInterface {
@@ -136,11 +139,22 @@ abstract class AbstractKernel implements KernelInterface
             "RequestInterface" => $request,
             "ServerRequestInterface" => $request,
             "StreamInterface" => $stream,
+	        "PathInterface" => $path
         ]);
 
         $middlewares = array_merge($this->userMiddlewares, $middlewares);
         $handler = new RequestHandler($middlewares, $finalHandler);
-        $response = $handler->handle($request);
+	    $app = $this->container->has("app") ? $this->container->get("app") : null;
+
+	    ob_start();
+	    $response = $handler->handle($request);
+	    $output = ob_get_clean();
+
+	    if((string)$output !== "" && ($app instanceof AppInterface && !$app->isProd())) {
+		    throw new \RuntimeException(
+			    'Unexpected output detected during request dispatch. Controllers must write to the response body instead of using echo.'
+		    );
+	    }
 
         return $response;
     }

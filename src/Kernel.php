@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace MaplePHP\Emitron;
 
+use MaplePHP\Http\Path;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -34,7 +35,10 @@ class Kernel extends AbstractKernel
         $this->dispatchConfig->getRouter()->dispatch(function ($data, $args, $middlewares) use ($request, $stream) {
 
 
+	        $parts = isset($data[2]) && is_array($data[2]) ? $data[2] : [];
 	        $dispatchCode = (int)($data[0] ?? DispatchCodes::FOUND->value);
+
+
 	        if($dispatchCode !== DispatchCodes::FOUND->value) {
 		        $data['handler'] = function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface
 		        {
@@ -51,14 +55,16 @@ class Kernel extends AbstractKernel
             $bodyStream = $this->getBody($stream);
             $factory = new ResponseFactory($bodyStream);
             $finalHandler = new ControllerRequestHandler($factory, $data['handler'] ?? []);
+			$path = new Path($parts, $request);
+
 
             $response = $this->initRequestHandler(
                 request: $request,
                 stream: $bodyStream,
+				path: $path,
                 finalHandler: $finalHandler,
                 middlewares: $middlewares
             );
-
             $this->createEmitter()->emit($response, $request);
         });
     }
