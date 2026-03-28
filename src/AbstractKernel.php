@@ -24,6 +24,7 @@ use MaplePHP\Emitron\Emitters\HttpEmitter;
 use MaplePHP\Http\Interfaces\PathInterface;
 use MaplePHP\Http\Stream;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -136,11 +137,11 @@ abstract class AbstractKernel implements KernelInterface
 	{
 
 		$this->bindInterfaces([
-			"ContainerInterface" => $this->container,
-			"RequestInterface" => $request,
-			"ServerRequestInterface" => $request,
-			"StreamInterface" => $stream,
-			"PathInterface" => fn() => $path
+			ContainerInterface::class => $this->container,
+			RequestInterface::class => $request,
+			ServerRequestInterface::class => $request,
+			StreamInterface::class => $stream,
+			PathInterface::class => $path
 		]);
 
 		$middlewares = array_merge($this->userMiddlewares, $middlewares);

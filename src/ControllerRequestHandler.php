@@ -28,7 +28,7 @@ final class ControllerRequestHandler implements RequestHandlerInterface
 		$response = $this->factory->createResponse();
 
 		$this->appendInterfaces([
-			"ResponseInterface" => $response,
+			ResponseInterface::class => $response,
 		]);
 
 		$controller = $this->controller;
